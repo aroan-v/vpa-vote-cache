@@ -5,7 +5,7 @@ import fetch from "node-fetch";
 
 // === Constants ===
 const FILE_PATH = path.resolve("rollingVotes.json");
-const MAX_ENTRIES = 12;
+const MAX_ENTRIES = 7;
 
 // === Map participant IDs to readable names ===
 const participantNames = {
