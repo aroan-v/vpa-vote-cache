@@ -1,0 +1,32 @@
+{
+  "times": [
+    "3:10 PM"
+  ],
+  "voteIncrements": {
+    "KISH": [
+      null
+    ],
+    "DUSTBIA": [
+      null
+    ],
+    "BREKA": [
+      null
+    ],
+    "WILLCA": [
+      null
+    ],
+    "AZRALPH": [
+      null
+    ]
+  },
+  "baselineVotes": {
+    "KISH": 55220,
+    "DUSTBIA": 6790424,
+    "BREKA": 99024,
+    "WILLCA": 6141533,
+    "AZRALPH": 154698
+  },
+  "updateTimesPH": [
+    "08/05/2025, 15:18:06"
+  ]
+}
