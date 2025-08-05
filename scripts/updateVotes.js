@@ -128,6 +128,7 @@ async function fetchAndUpdateVotes() {
       }
     }
 
+    rollingData.baselineVotes = currentVotes;
     saveData(rollingData);
     console.log(`✅ Updated @ ${timeLabel} (PH now: ${nowPH})`);
 
