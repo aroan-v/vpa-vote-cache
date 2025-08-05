@@ -88,14 +88,14 @@ async function fetchAndUpdateVotes() {
     // === First fetch ever ===
     if (!rollingData.baselineVotes) {
       rollingData.baselineVotes = currentVotes;
-      rollingData.times.push(timeLabel);
-      rollingData.updateTimesPH.push(nowPH); // ⏱️ Push PH time
+      // rollingData.times.push(timeLabel); im deleting this so that times array is untouched (cause the gain count is still empty)
+      // rollingData.updateTimesPH.push(nowPH); also deleting this so that the next update will have actual update
 
       for (const name of Object.keys(currentVotes)) {
         if (!rollingData.voteIncrements[name]) {
           rollingData.voteIncrements[name] = [];
         }
-        rollingData.voteIncrements[name].push(null); // placeholder
+        // rollingData.voteIncrements[name].push(null); // placeholder also removing this push of null - we only want to start pushing when the actual difference comes in 
       }
 
       saveData(rollingData);
