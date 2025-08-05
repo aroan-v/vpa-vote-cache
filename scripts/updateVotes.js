@@ -51,15 +51,32 @@ async function fetchAndUpdateVotes() {
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
     const data = await response.json();
-    const timeLabel = formatTimePH(data.updated);
+    const timeLabel = formatTimePH(data.updated); // Based on API update time
+
+    // ✅ Get local PH time when this script is fired (actual time of GitHub Action)
+    const nowPH = new Intl.DateTimeFormat("en-US", {
+      timeZone: "Asia/Manila",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false
+    }).format(new Date());
 
     // Load local file
     const rollingData = loadData();
 
-    // Avoid duplicate timestamp
+    // 🛡️ Prevent duplicates
     if (rollingData.times.includes(timeLabel)) {
       console.log("🟡 Duplicate timestamp, skipping update.");
       return;
+    }
+
+    // ✅ Make sure updateTimesPH exists
+    if (!rollingData.updateTimesPH) {
+      rollingData.updateTimesPH = [];
     }
 
     const currentVotes = {};
@@ -72,6 +89,7 @@ async function fetchAndUpdateVotes() {
     if (!rollingData.baselineVotes) {
       rollingData.baselineVotes = currentVotes;
       rollingData.times.push(timeLabel);
+      rollingData.updateTimesPH.push(nowPH); // ⏱️ Push PH time
 
       for (const name of Object.keys(currentVotes)) {
         if (!rollingData.voteIncrements[name]) {
@@ -81,12 +99,14 @@ async function fetchAndUpdateVotes() {
       }
 
       saveData(rollingData);
-      console.log("🟡 Baseline set.");
+      console.log(`🟡 Baseline set @ ${nowPH}`);
       return;
     }
 
     // === Normal update ===
     rollingData.times.push(timeLabel);
+    rollingData.updateTimesPH.push(nowPH); // ⏱️ Push PH time
+
     for (const [name, current] of Object.entries(currentVotes)) {
       const prev = rollingData.baselineVotes[name] || 0;
       const diff = current - prev;
@@ -98,23 +118,24 @@ async function fetchAndUpdateVotes() {
       rollingData.voteIncrements[name].push(diff);
     }
 
-    // === Trim to latest MAX_ENTRIES
+    // === Trim if over max
     if (rollingData.times.length > MAX_ENTRIES) {
       const excess = rollingData.times.length - MAX_ENTRIES;
       rollingData.times.splice(0, excess);
+      rollingData.updateTimesPH.splice(0, excess); // ✂️ Trim this too
       for (const name in rollingData.voteIncrements) {
         rollingData.voteIncrements[name].splice(0, excess);
       }
     }
 
-    // === Save updated data
     saveData(rollingData);
-    console.log(`✅ Updated @ ${timeLabel}`);
+    console.log(`✅ Updated @ ${timeLabel} (PH now: ${nowPH})`);
 
   } catch (err) {
     console.error("❌ Error:", err.message);
   }
 }
+
 
 // === Run once ===
 fetchAndUpdateVotes();
